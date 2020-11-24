@@ -1,20 +1,33 @@
-import { Controller, Post, Body } from '@nestjs/common';
+import { Controller, Post, Body, Get, Put } from '@nestjs/common';
 
-import { CreatePlayerDTO } from './dtos/create-player.dto';
+import { PlayerDTO } from './dtos/player.dto';
+import { Player } from './interfaces/player.interface';
+
+import { PlayersService } from './players.service';
 
 @Controller('api/v1/players')
 export class PlayersController {
 
+    constructor(private readonly playersService: PlayersService){}
+
     @Post()
     async createPlayer(
-        @Body() createPlayerDTO: CreatePlayerDTO
+        @Body() playerDTO: PlayerDTO
     ) {
-        const { phoneNumber, email, name } = createPlayerDTO;
+        return await this.playersService.create(playerDTO);
+    }
 
-        return {
-            name,
-            email,
-            phoneNumber
-        };
+    @Put()
+    async updatePlayer(
+        @Body() playerDTO: PlayerDTO
+    ) {
+        return await this.playersService.update(playerDTO);
+    }
+
+    @Get()
+    async findAll(): Promise<Player[]> {
+
+        return this.playersService.findAll();
+    
     }
 }
