@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 
 import { PlayerDTO } from './dtos/player.dto';
 
@@ -43,6 +43,21 @@ export class PlayersService {
 
     async findAll(): Promise<Player[]> {
         return await this.players;
+    }
+
+    async findByEmail(email: string): Promise<Player> {
+        const player = this.players.find(player => player.email === email);
+
+        if(!player){
+            throw new NotFoundException(`Email (${email}) doesn't exist`);
+        } else {
+            return player;
+        }
+    }
+
+    async delete(email: String): Promise<void> {
+        const playerFinded = this.players.find(player => player.email === email);
+        this.players = this.players.filter(player => player.email !== playerFinded.email);     
     }
 
 }
